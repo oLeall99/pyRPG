@@ -55,6 +55,7 @@ class Hero: # Classe do Personagem do usuário
     # Sistema de Adicionar Armas ao inventário:
     def add_weapon(self, weapon):
         self.arsenal.append(weapon)
+        print(f"{weapon.name} adicionada")
 
 
     def attack(self, monster_dex):

@@ -154,7 +154,8 @@ def game(heroi):
             return 0
         elif not opcao.lower() == 's':
             print("| ! Opção inválida, tente novamente")
-        break
+        else:
+            break
     
 
     # Loop principal do jogo:
@@ -229,7 +230,7 @@ def game(heroi):
                             # cancelar sair sem salvar 
                             break
 
-                        elif not opcao2.lower() == 's':
+                        elif opcao2.lower() == 's':
                             # Sair sem salvar
                             return 0
                         
@@ -330,7 +331,7 @@ def fight(heroi):
                     # Aprimorando o herói após vitória
                     while True:
 
-                        if heroi.level % 10 != 0:
+                        if heroi.level % 5 != 0:
                             clear_terminal() # Limpeza do Terminal
                             print("| -------------------------")
                             print("| !!! Você conseguiu um Aprioramento!")
@@ -340,8 +341,10 @@ def fight(heroi):
                             print("|   [2]. Dex # Aumenta suas chances de esquivar de ataques")
                             print("|   [3]. Precisão # Aumenta sua chance de acertar ataques")
                             print("|   [4]. Vida # Aumenta sua vida máxima e recupera sua vida")
-
-                            opcao = int(input("| > Escolha: ")) - 1 # Reduz a escolha em um levando em consideração a lista
+                            try:
+                                opcao = int(input("| > Escolha: ")) - 1 # Reduz a escolha em um levando em consideração a lista
+                            except ValueError:
+                                print("| > Opção inválida, tente novamente")
 
                             if opcao < 0 or opcao >= 4:
                                 print("| > Opção inválida, tente novamente")
@@ -363,8 +366,9 @@ def fight(heroi):
                                 break
                         else:
 
-                            arma_nova = Weapon(heroi.level)
+                            arma_nova = Weapon(level=heroi.level + 1)
                             clear_terminal() # Limpeza do Terminal
+                            print("| -------------------------")
                             print("| !!! O monstro deixou uma Arma!")
                             print("| -------------------------")
                             print(f"| ! {arma_nova.name} {arma_nova.adj} Dano: {arma_nova.damage}")
@@ -372,20 +376,20 @@ def fight(heroi):
                             print("| -> Opções:")
                             print("|   [1]. Pegar")
                             print("|   [2]. Deixar")
-                            pause = input("| > Enter ")
+                            print("| -------------------------")
+                            opcao = int(input("| > Escolha: "))  # Reduz a escolha em um levando em consideração a lista
 
-                            opcao = int(input("| > Escolha: ")) - 1 # Reduz a escolha em um levando em consideração a lista
-
-                            if opcao < 0 or opcao >= 3:
+                            if opcao < 1 or opcao > 2:
                                 print("| > Opção inválida, tente novamente")
                             else:
                                 # Adiciona a arma ao inventário
-                                heroi.add_weapon(arma_nova)
-                                clear_terminal() # Limpeza do Terminal
-                                print("| -------------------------") 
-                                print(f"| !!!{arma_nova.name} {arma_nova.adj} adicionado(a) ao inventário!")
-                                print("| -------------------------")
-                                pause = input("| > Enter ") 
+                                if opcao == 1:
+                                    heroi.add_weapon(arma_nova)
+                                    clear_terminal() # Limpeza do Terminal
+                                    print("| -------------------------") 
+                                    print(f"| !!!{arma_nova.name} {arma_nova.adj} adicionado(a) ao inventário!")
+                                    print("| -------------------------")
+                                    pause = input("| > Enter ") 
                                 break
 
                     break # Fim do combate
@@ -481,23 +485,23 @@ def fight(heroi):
 
 # Função de Ver o inventário do Heroi:
 def inventory(arsenal):
-    clear_terminal() # Limpeza do Terminal
-    print("| -------------------------")
-    print(f"| !!! Inventário:")
-    print("| -------------------------")
-    print("| -------------------------")
-    print(f"| ! Arma Equipada: {arsenal[0].name} {arsenal[0].adj} Dano: {arsenal[0].damage}")
-    print("| -------------------------")
-    
-    # Lista demais armas do personagem
-    if len(arsenal) > 1:
-        for count, arma in enumerate(arsenal[1:]): # Le a lista de armas a partir da segunda arma
-            print(f"|   [{count + 1}]. {arma.name} {arma.adj} Dano: {arma.damage}")
-    else:
-        print("| ! Mochila Vazia")
-   
-    # Pergunta o que o usuário deseja fazer:
+
     while True:
+        clear_terminal() # Limpeza do Terminal
+        print("| -------------------------")
+        print(f"| !!! Inventário:")
+        print("| -------------------------")
+        print(f"| ! Arma Equipada: {arsenal[0].name} {arsenal[0].adj} Dano: {arsenal[0].damage}")
+        print("| -------------------------")
+
+        # Lista demais armas do personagem
+        if len(arsenal) > 1:
+            for count, arma in enumerate(arsenal[1:]): # Le a lista de armas a partir da segunda arma
+                print(f"|   [{count + 1}]. {arma.name} {arma.adj} Dano: {arma.damage}")
+        else:
+            print("| ! Mochila Vazia")
+        
+        # Pergunta o que o usuário deseja fazer:
         print("| -------------------------")
         print("| -> Opções:")
         print("|   [1]. Equipar Nova Arma")
@@ -523,6 +527,7 @@ def inventory(arsenal):
                                 print("| ! Arma Já esta equipada")
                             else:
                                 arsenal[0], arsenal[opcao] = arsenal[opcao], arsenal[0] # Troca as armas de posição
+                                print("| -------------------------")
                                 print(f"| ! {arma.name} {arma.adj} equipado(a)")
                             break
                             # ! Arma 0 sempre será a arma equipada
