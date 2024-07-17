@@ -21,7 +21,7 @@ class Weapon: # Classe de Armas dos Personagem
                 self.name = random.choice(weapons_list_B)
                 self.adj = random.choice(weapons_adj_list_B)
 
-        self.damage = random.randint(int(level*0.5), int(level*1.5)) 
+        self.damage = random.randint(int(level*0.8), int(level*1.5))  + 1
 
 class Hero: # Classe do Personagem do usuário
     def __init__(self, name, title,level=1, damage=0, hp=0, dex=0, accuracy=0, arsenal=[]): # Ao criar um novo objeto Hero realiza essa função
@@ -31,8 +31,8 @@ class Hero: # Classe do Personagem do usuário
         self.arsenal = arsenal
         self.status = {
             'damage': damage + 2,  # Dano básico do Herói
-            'dex': dex + level,  # Chance de esquivar de um golpe
-            'accuracy': accuracy + level  # Precisão de um golpe
+            'dex': dex + 2,  # Chance de esquivar de um golpe
+            'accuracy': accuracy + 2  # Precisão de um golpe
         }
         self.life = 10 + hp + level * 3  # Vida aumenta mais significativamente por nível
 
@@ -45,12 +45,12 @@ class Hero: # Classe do Personagem do usuário
 
         # Caso queira aumentar a vida do personagem
         if option == 3:
-            self.life += 3
+            self.life += 3 * random.randint(int(0.8*level) + int(1.2*level))
             self.atual_life = self.life
         
         # Demais upgrades
         else:
-            self.status[upgrade[option]] += int(level * 0.5) + 1
+            self.status[upgrade[option]] += int(level * 0.25) + 2
     
     # Sistema de Adicionar Armas ao inventário:
     def add_weapon(self, weapon):
@@ -100,10 +100,10 @@ class Monster: # Classe dos inimigos do usuário
             self.title = random.choice(titulos_femininos)
         
         # Demais status do monstro de acordo com o andar do herói
-        self.life = random.randint(1, 3) * level + 5 + level
+        self.life = random.randint(1, 2) * int(level * 0.8) + 4
         self.status = {
-            'damage': random.randint(1, 3) + level * 2,  # Dano básico do Monstro
-            'dex': random.randint(1, 2) + level,  # Chance de esquivar de um golpe
-            'accuracy': random.randint(1, 2) + level  # Precisão de um golpe
+            'damage': random.randint(1, 2) + int(level * 1.2),  # Dano básico do Monstro
+            'dex': random.randint(1, 2) + random.randint(int(level * 0.8), int(level * 1.2)),  # Chance de esquivar de um golpe
+            'accuracy': random.randint(1, 2) + random.randint(int(level * 0.8), int(level * 1.2))  # Precisão de um golpe
         }
 

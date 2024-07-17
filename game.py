@@ -163,15 +163,18 @@ def game(heroi):
         clear_terminal() # Limpeza do Terminal
         print("| -------------------------")
         print(f"| >>> {andar}º Andar:")
+        print(f"| Vida: {heroi.atual_life} / {heroi.life}")
         print("| -------------------------")
         print("| -> Opções:")
         print("|   [1]. Avançar")
         print("|   [2]. Inventário")
         print("|   [3]. Status")
         print("|   [0]. Voltar")
-
-        opcao = int(input("| > Escolha: "))
-
+        try:
+            opcao = int(input("| > Escolha: "))
+        except ValueError:
+            print("| ! Opção inválida, tente novamente")
+            
         if opcao > 3 or opcao < 0:
             print("| ! Opção inválida, tente novamente")
         
@@ -270,21 +273,26 @@ def fight(heroi):
         while True: 
             # Menu de ações:
             clear_terminal() # Limpeza do Terminal
+            print("| -------------------------")
             print(f"| ! Combate com {monster.name} {monster.title} {monster.life} / {monster_max_life} :")
+            print(f"| Heroi: {heroi.atual_life} / {heroi.life} HP")
             print("| -------------------------")
             print("| -> Opções:")
             print("|   [1]. Atacar")
             print("|   [2]. Inspecionar")
             print("|   [3]. Inventário")
             print("|   [0]. Fugir")
-            option = int(input('| > Escolha: '))
-            
-            # Em caso de escolha inválida:
-            if option > 3 or option < 0:
-                print("| -------------------------")
+            try:
+                option = int(input('| > Escolha: '))
+                            # Em caso de escolha inválida:
+                if option > 3 or option < 0:
+                    print("| -------------------------")
+                    print("| ! Opção inválida, tente novamente")
+                else: 
+                    break
+            except ValueError:
                 print("| ! Opção inválida, tente novamente")
-            else: 
-                break
+        
         
         # Caso queira Sair da Masmorra:
         if option == 0:
