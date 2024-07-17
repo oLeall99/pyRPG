@@ -45,7 +45,7 @@ class Hero: # Classe do Personagem do usuário
 
         # Caso queira aumentar a vida do personagem
         if option == 3:
-            self.life += 3 * random.randint(int(0.8*level) + int(1.2*level))
+            self.life += 3 * random.randint(int(0.8*level), int(1.2*level))
             self.atual_life = self.life
         
         # Demais upgrades
