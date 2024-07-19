@@ -7,17 +7,17 @@ def save(hero):
         # Caso tudo ocorra bem retorna uma mensagem de sucesso
         with open('save_pyRPG.pkl', 'wb') as f:
             pickle.dump(hero, f)
-        return "| ! Progresso Salvo com Sucesso!!"
+        return 1
     
     # Caso receba um erro retorna uma mensagem de erro:
     except Exception as e:
-        return f"Erro ao salvar o objeto: {e}"
+        return e
 
 # Carregar um heroi apartir de um arquivo "save_pyRPG.pkl"
 def load():
+    save_path = get_save_path()
+    if not os.path.exists(save_path):
     # caso não exista arquivo de save
-    if not os.path.exists("save_pyRPG.pkl"):
-        print("| ! Não foi possível carregar save: o arquivo 'save_pyRPG.pkl' não existe.")
         return None
     
     try:
@@ -35,3 +35,9 @@ def load():
         print(f"| ! Erro inesperado: {e}")
         return None
 
+def get_save_path():
+    # Diretório onde o script está localizado
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # Caminho completo para o arquivo de save
+    save_path = os.path.join(base_dir, 'save.pkl')
+    return save_path

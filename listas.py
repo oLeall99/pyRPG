@@ -6,13 +6,14 @@ weapons_adj_list_A = [
     "Milenar", "Mortal", "Negra", "Nojenta", "Nova", "Oleosa", "Pequena", "Quebrada",
     "Serrada", "Suja", "Velha", "Vermelha", "Venenosa", "Voraz", "Silenciosa",
     "Invisível", "Reluzente", "Ensanguentada", "Gloriosa", "Fumegante", "Gelada",
-    "Flamejante", "Assombrada", "Sagrada", "Terrível"
+    "Flamejante", "Assombrada", "Sagrada", "Terrível", "Torta", "Insana", 
+    "Vazio"
 ]
 
 weapons_list_A = [
     "Adaga", "Alabarda", "Catana", "Espada", "Espada Curta", 
     "Espada Curva", "Espada Longa", "Faca", "Lança", "Manopla", 
-    "Foice", "Besta", "Clava", "Maça", "Garras"
+     "Besta", "Clava", "Maça", "Garras", "Foice", "Luvas"
 ]
 
 weapons_adj_list_B = [
@@ -23,15 +24,16 @@ weapons_adj_list_B = [
     "Milenar", "Mortal", "Negro", "Nojento", "Novo", "Oleoso", "Pequeno", "Quebrado",
     "Serrado", "Sujo", "Velho", "Vermelho", "Venenoso", "Voraz", "Silencioso",
     "Invisível", "Reluzente", "Ensanguentado", "Glorioso", "Fumegante", "Gelado",
-    "Flamejante", "Assombrado", "Sagrado", "Terrível"
+    "Flamejante", "Assombrado", "Sagrado", "Terrível", "Torto", "sem Ponta"
+    "Insano", "Vazia"
 ]
 
 weapons_list_B = [
-    "Soco Inglês", "Machado", "Martelo", "Foice", "Arco", 
-    "Clava", "Punhal", "Sabre", "Nunchaku", "San Tie Kwan" 
+    "Soco Inglês", "Machado", "Martelo",  "Arco", 
+    "Clava", "Punhal", "Sabre", "Nunchaku", "San Tie Kwan",
     "Florete", "Cajado", "Tridente", "Bastão", "Canhão", 
     "Espadão", "Cutelo", "Mangual", "Porrete", "Chicote",
-    "Facão", "Punhal", "Florete", "Leque"
+    "Facão", "Punhal", "Florete", "Leque", 
 ]
 
 
@@ -56,7 +58,7 @@ titulos_masculinos = [
     "Vingativo", "Fragelo", "Pecador", "Filho das sombras", "o zé ninguém",
     "Descolado", "Amigável", "Não Amigável", "Mentiroso", "Angelical",
     "Gentil", "Doente", "Tempestuoso", "Morto-Vivo", "Bravo", 
-    "Normal"
+    "Normal", "Gaúcho", "Musculoso", "Técnico de Informática"
 ]
 
 # Feminino
@@ -76,5 +78,7 @@ titulos_femininos = [
     "Anciã", "Rancorosa", "Filha das Sombra", "Iluminada", "Purificada",
     "Depravada", "Pequena", "Fraca", "Temerosa", "Audaciosa", "Santificada",
     "Enfraquecida", "Venenosa", "Estranha", "Confusa", "Gentil", "Doente", 
-    "Angelical", "Cheirosa", "Profana"
+    "Angelical", "Cheirosa", "Profana", "Cozinheira"
 ]
+
+

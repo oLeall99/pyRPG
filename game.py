@@ -1,559 +1,338 @@
 import random
-from classes import Hero, Weapon, Monster
-from menu import clear_terminal
-from save import save, load
+from colorama import Fore
 
-# Criando um novo personagem
+from classes import Hero, Weapon, Monster
+from menu import *
+from save import *
+from prints import *
+
+# Criando um novo Personagem
 def new_game():
     while True:
-        clear_terminal() # Limpeza do Terminal
+        try:
+            clear_terminal() # Limpeza do Terminal
 
-        # Criação de Personagem:
-        print("| -------------------------")
-        print("| >>> PYRPG")
-        print("| -------------------------")
-        print("| !! Criando novo Personagem:")
+            # Criação de Personagem:        
+            name = input(Fore.CYAN + msg_create_heroi_name + Fore.WHITE)
+            option = menu(msg_upgrades, 1, 4)
+
+            # De acordo com a opção aumenta o valor do status respectivo:
+            status = [ 3, 2, 2, 5 ] # Dano, Dex, Accuracy, Life
+
+            if option == 1: # Dano
+                status[0] += 2
+
+            elif option == 2 or option == 3: # Dex e Precisão
+                status[option - 1] += 2
+
+            elif option == 4: # Vida
+                status[3] += 5
+
+            # Definido Arma inicial
+            armas = [ Weapon(level=2), Weapon(level=2), Weapon(level=2) ]
+            msg_armas = f"""| =============================
+| -> Arma Inicial:
+|   [1]. {armas[0].name} {armas[0].adj} dano++: {armas[0].damage}
+|   [2]. {armas[1].name} {armas[1].adj} dano++: {armas[1].damage}
+|   [3]. {armas[2].name} {armas[2].adj} dano++: {armas[2].damage}
+| ============================="""
         
-        name = input("| > Nome do Personagem: ")
-        opcao = 0
-        while True: # Enquanto não escolher uma opção válida permanece no loop
-            print("| -------------------------")
-            print("| -> Upgrade Inicial:")
-            print("|   [1]. Dano # Ataques causam mais dano")
-            print("|   [2]. Vida # Aumenta sua vida máxima")
-            print("|   [3]. Dex # Aumenta suas chances de esquivar de ataques")
-            print("|   [4]. Precisão # Aumenta sua chance de acertar ataques")
+            # Adiciona a arma desejada
+            arma_escolhida = menu(msg_armas, 1, 3)
+            arsenal = [armas[arma_escolhida - 1] ]
 
-            opcao = int(input("| > Escolha: ")) - 1 # Reduz a escolha em um levando em consideração a lista
-            
-            if opcao < 0 or opcao >= 4:
-                print("| > Opção inválida, tente novamente")
-            else:
-                break
-        
-        # De acordo com a opção aumenta o valor do status respectivo:
-        dano = 1
-        vida = 0 
-        dex = 1
-        accuracy = 2
-        if opcao == 0: 
-            dano += 2
-        elif opcao == 1:
-            vida += 2
-        elif opcao == 3:
-            dex += 1
-        else: 
-            accuracy += 1
-            
-        while True: 
+            del armas
+            # Cria um objeto Heroi, com os dados do personagem
+            heroi = Hero(name, f'O iniciante', 1, damage=status[0], dex=status[1], accuracy=status[2], hp=status[3] ,arsenal=arsenal)
 
-            arma1 = Weapon(level=2)
-            arma2 = Weapon(level=2)
-            arma3 = Weapon(level=2)
-            print("| -------------------------")
-            print("| -> Arma Inicial:")
-            print(f"|   [1]. {arma1.name} {arma1.adj} Dano++: {arma1.damage}")
-            print(f"|   [2]. {arma2.name} {arma2.adj} Dano++: {arma2.damage}")
-            print(f"|   [3]. {arma3.name} {arma3.adj} Dano++: {arma3.damage}")
+            print_heroi(heroi)
 
-            arma_escolhida = int(input("| > Escolha: ")) # Escolha a arma que deseja
-            
-            if arma_escolhida < 1 or arma_escolhida >= 4:
-                print("| > Opção inválida, tente novamente")
-            else:
-                break
-        
-        # Adiciona a arma desejada
-        armas = []
-        if arma_escolhida == 1:
-            armas.append(arma1)
-        elif arma_escolhida == 2:
-            armas.append(arma2)
-        else:
-            armas.append(arma3)
-
-        clear_terminal() # Limpeza do Terminal
-        # Cria um objeto Heroi, com os dados do personagem
-        heroi = Hero(name, f'O iniciante', 1, dano, vida, dex, accuracy, armas)
-        heroi_save = heroi
-        print("| -------------------------")
-        print(f"| ! Bem vindo a masmorra {heroi.name}, {heroi.title}")
-        print("| -------------------------")
-        print("| !! Status:")
-        print(f"|   Life: { heroi.life}")
-        print(f"|   Dex: {heroi.status['dex']} | Precisão: { heroi.status['accuracy']}")
-        print(f"|   Dano: {heroi.status['damage']} + {heroi.arsenal[0].damage} ({heroi.arsenal[0].name})")
-        print("| -------------------------")
-        
-        result = game(heroi) # Passa o objeto para o jogo
-        if result == 0:
             break
-        elif result == 2:
-            while True:
-                clear_terminal() # Limpeza do Terminal
-                opcao = input("| > Deseja Recomeçar? S/N ")
-                if opcao.lower() == 'n':
-                    return 0
-                elif opcao.lower() == 's':
-                    #Reset do Heroi para recomeçar
-                    heroi = Hero(name, f'O iniciante', 1, dano, vida, dex, accuracy, armas)
-                    game(heroi)
-                else:
-                    print("| ! Opção inválida, tente novamente")
-        else: 
-            game(heroi)
 
+        except Exception as e: # Caso tenha algum erro:
+            clear_terminal()   # Limpeza do Terminal
+            print(Fore.RED + "| X ERRO: " + str(e))
+            input(Fore.RED + "| x Erro ao Criar Herói, Tente Novamente.")
+    
+    # Retorna o heroi criado em caso de sucesso
+    return heroi
+
+# Carregar um Personagem
 def load_game():
-    clear_terminal() # Limpeza do Terminal
+    try: 
+        clear_terminal() # Limpeza do Terminal
 
-    # Carregando Personagem:
-    print("| -------------------------")
-    print("| >>> PYRPG")
-    print("| -------------------------")
-    print("| !! Carregando Arquivo:")
-    print("| -------------------------")
-    print("| > OBS:")
-    print("| É necessário que tenha um arquivo")
-    print("| 'save_pyRPG.pkl' para carregar o")
-    print("| personagem")
-    print("| -------------------------")
-    input("| > Enter ")
-    heroi = load()
+        # Carregando Personagem:
+        input(Fore.CYAN + msg_load_game)
+        heroi = load()
 
-    if not heroi:
-        print("| -------------------------")
-        print("| ! Retornando para menu...")
-        input("| > Enter ")
-    else:
         clear_terminal()
-        print("| -------------------------")
-        print("| !! Arquivo Carregado!")
-        print("| -------------------------")
-        input("| > Enter ")
+        if not heroi:
+            input(Fore.RED + msg_load_error)
+            return None
+        else:
+            input(Fore.CYAN + msg_load_sucess)
 
-        game(heroi)
+            return heroi
 
-    print("| -------------------------")
+
+    except Exception as e:
+            clear_terminal()   # Limpeza do Terminal
+            print(Fore.RED + "| X ERRO: " + str(e))
+            input(Fore.RED + "| x Erro ao Carregar Herói, Tente Novamente.")
+            return None
 
 
 # Jogo
 def game(heroi):
     clear_terminal() # Limpeza do Terminal
-    print("| >>> PYRPG")
-    print("| -------------------------")
-    print("| Em Lucendi existe uma masmorra antiga, a qual diversos ")
-    print("| aventureiros e mercenários adentraram em busca de fortuna,") 
-    print("| porém ninguém foi capaz de alcançar o seu fim...") 
-    print("| será que você é capaz?")
-    print("|")
+    entrar =  menu_y_n(msg_game_intro)
     
-    # Caso jogador não queira começar:
-    while True:
-        opcao = input("| > Entrar? (S/N) ")
-        if opcao.lower() == 'n':
-            return 0
-        elif not opcao.lower() == 's':
-            print("| ! Opção inválida, tente novamente")
-        else:
-            break
+    # Não deseja entrar no jogo
+    if not entrar:
+        return heroi
     
 
     # Loop principal do jogo:
     while True:
-        andar = heroi.level # Andar Inicial
-        clear_terminal() # Limpeza do Terminal
-        print("| -------------------------")
-        print(f"| >>> {andar}º Andar:")
-        print(f"| Vida: {heroi.atual_life} / {heroi.life}")
-        print("| -------------------------")
-        print("| -> Opções:")
-        print("|   [1]. Avançar")
-        print("|   [2]. Inventário")
-        print("|   [3]. Status")
-        print("|   [0]. Voltar")
-        try:
-            opcao = int(input("| > Escolha: "))
-        except ValueError:
-            print("| ! Opção inválida, tente novamente")
-            
-        if opcao > 3 or opcao < 0:
-            print("| ! Opção inválida, tente novamente")
+        option = menu("| =============================\n" + f"| >>> {heroi.level}º Andar:\n" + 
+        "| Vida: " + Fore.GREEN + f"{heroi.atual_life}" + Fore.CYAN + " / " + Fore.GREEN +  f"{heroi.life}" 
+        + Fore.CYAN + menu_andar, 0, 3)
         
-        elif opcao == 1:
-            luck = random.randint(1,20)
-            if luck == 20:
-                clear_terminal() # Limpeza do Terminal
-                print("| ! O Andar esta vazio, você prossegue tranquilamente...")
-                print("| -------------------------")
-                pause = input("| > Enter ")
-            else:
-                if not fight(heroi):
-                    return 2
-                
-            heroi.level += 1
-
-        elif opcao == 2: 
-            # Abre o inventário do Personagem e altera ele:
-            clear_terminal() # Limpeza do Terminal
-            heroi.inventory(arsenal = inventory(heroi.arsenal))
-                
-        elif opcao == 3:
-            # Mostra os status do Heroi
-            clear_terminal() # Limpeza do Terminal
-            status = heroi.status
-            arsenal = heroi.arsenal
-            print("| -------------------------")
-            print("| !! Status:")
-            print("| -------------------------")
-            print(f"|   Vida: { heroi.life}")
-            print(f"|   Dex: {status['dex']} | Precisão: {status['accuracy']}")
-            print(f"|   Dano: {status['damage']} + {arsenal[0].damage} ({arsenal[0].name})")
-            print("| -------------------------")
-            pause = input("| > Enter ")
-        else: 
+        # Realiza a opção desejada:
+        if option == 0:
             # Caso jogador queira sair:
+            salvar = menu_y_n(ask_save_progress)
 
-            while True:
-                clear_terminal() # Limpeza de Terminal
-                
-                # Salvar Progresso?
-                print("| -------------------------")
-                opcao = input("| > Salvar Progresso? (S/N) ")
-                if opcao.lower() == 'n':
-                    print("| -------------------------")
+            # Caso Não Queira Salvar:
+            if not salvar:
+                salvar = menu_y_n(ask_save_progress_again)
 
-                    while True:
-
-                        # confirmar que não deseja salvar progresso
-                        opcao2 = input("| > Certeza? seu progresso será perdido! (S/N) ")
-                        if opcao2.lower() == 'n':
-                            # cancelar sair sem salvar 
-                            break
-
-                        elif opcao2.lower() == 's':
-                            # Sair sem salvar
-                            return 0
-                        
-                # Caso escolha uma opção inválida:   
-                elif not opcao.lower() == 's':
-                    print("| ! Opção inválida, tente novamente")
-                else:
-                    break
-            salvar = save(heroi)
-            print("| -------------------------")
-            print(salvar)
-            print("| -------------------------")
-            pause = input("| > Enter ")
+                if salvar:
+                    return None            
             
-            if salvar != "| ! Progresso Salvo com Sucesso!!":
-                print("| -------------------------")
-                print("| ! Voltando para menu...")
-                print("| -------------------------")
-                pause = input("| > Enter ")
+            # Caso Queira Salvar:
             else:
-                break
+                try:
+                    # Salva Progresso:
+                    salvando = save(heroi)
+                    clear_terminal() # Limpeza do Terminal
+                    if salvando:
+                        input(Fore.CYAN + save_sucess)
+                    else:
+                        input( Fore.RED + msg_line + str(salvando) + msg_enter)
+
+                except Exception as e: # Erro ao Salvar
+                    clear_terminal()   # Limpeza do Terminal
+                    print(Fore.RED + "| X ERRO: " + str(e))
+                    input(Fore.RED + "| x Erro ao Salvar Herói, Tente Novamente.")
+                    break
+                
+                # Retorna para menu inicial
+                return None
+
+        else:
+            # Faz demais ações:
+            funcoes = combat, inventory, print_heroi
+            
+            action = funcoes[option - 1](heroi)
+            if action == True:    
+                if heroi.level % 5 != 0:
+                    # Upgrade de Status em andares não múltiplos de 5
+                    upgrade = menu(msg_upgrades, 1, 4)
+                    heroi.up_level(heroi.level, upgrade)
+                    print_heroi(heroi)
+                else:
+                    new_arma = Weapon(level=heroi.level)
+                    arma_nova = menu(monster_weapon +
+                                    f"| ! {new_arma.name} {new_arma.adj} dano++: {new_arma.damage}"
+                                    + menu_new_weapon, 0, 1
+                                )
+                    
+                    if arma_nova:
+                        heroi.add_weapon(new_arma)
+                        input(Fore.CYAN + "| ==========================================\n| ! " + Fore.YELLOW
+                                + f"{new_arma.name} {new_arma.adj} Adicionado a mochila!\n" + Fore.CYAN
+                                + "| =========================================="
+                        )
+                    else: 
+                        del new_arma
+                
+                if action != 3:            
+                    heroi.level += 1
+                    if heroi.level % 10 == 0:
+                        heroi.atul_life = heroi.life
+
+            elif not action:
+                again = menu_y_n(go_again)
+
+                if not again:
+                    break 
+                else:
+                    heroi.reset()
+
+
     return 0
 
-def fight(heroi):
-    clear_terminal() # Limpeza do Terminal
-    print("| -------------------------")
-    print("| ! Você avança pelo andar e...")
-    # Cria uma criatura do andar:
-    monster = Monster(heroi.level)
-    monster_max_life = monster.life
-    print(f"| ! encontra um(a) {monster.name} {monster.title}")
-    print("| -------------------------")
-    print("| !! Status:")
-    print(f"|   Dano: {monster.status['damage']} | Vida: { monster.life}")
-    print(f"|   Dex: {monster.status['dex']} | Precisão: {monster.status['accuracy']}")
-    print("| -------------------------""")
-    pause = input("| > Enter ")
+def combat(heroi):
+    # Define se terá monstro no andar ou não:
+    luck = random.randint(1,20)
+    if luck == 20: # Se valor igual a 20 sem monstro
+        clear_terminal()
+        input(msg_empty_level)
+        return 20
+    
+    else:
+        # Cria uma criatura do andar:
+        monster = Monster(heroi.level)
+        print_monster(monster)
     while True:
         # Combate por turnos, cada loop do while é um turno
         
         while True: 
             # Menu de ações:
-            clear_terminal() # Limpeza do Terminal
-            print("| -------------------------")
-            print(f"| ! Combate com {monster.name} {monster.title} {monster.life} / {monster_max_life} :")
-            print(f"| Heroi: {heroi.atual_life} / {heroi.life} HP")
-            print("| -------------------------")
-            print("| -> Opções:")
-            print("|   [1]. Atacar")
-            print("|   [2]. Inspecionar")
-            print("|   [3]. Inventário")
-            print("|   [0]. Fugir")
-            try:
-                option = int(input('| > Escolha: '))
-                            # Em caso de escolha inválida:
-                if option > 3 or option < 0:
-                    print("| -------------------------")
-                    print("| ! Opção inválida, tente novamente")
-                else: 
-                    break
-            except ValueError:
-                print("| ! Opção inválida, tente novamente")
-        
-        
-        # Caso queira Sair da Masmorra:
-        if option == 0:
-            clear_terminal() # Limpeza do Terminal
-            print("| -------------------------")
-            print(f"| !! Sua jornada parou no andar {heroi.level}")
-            print("| ! Saindo da Masmorra...")
-            print("| -------------------------")
-            pause = input("| > Enter ")
-        # Caso queira atacar:
-        elif option == 1:
-            # Função que define aleatoriamente o ataque e retorna True ou False:
-            if heroi.attack(monster.status['dex']):
+            option = menu("| =============================\n| !!" + 
+                        Fore.RED + Style.BRIGHT + 
+                        f" {monster.name} {monster.title} {monster.atual_life} / {monster.life}" + Fore.CYAN + Style.NORMAL + ":\n" + 
 
-                # Se verdadeiro o ataque acertou!!
-                # Remove o dano do héroi da vida do monstro
-                monster.life = monster.life - heroi.status['damage'] - heroi.arsenal[0].damage
-                
-                clear_terminal() # Limpeza do Terminal
-                print("| -------------------------")
-                print(f"| ! Você acertou {monster.name} {monster.title}!!")
-                print(f"| ! Ele está com {monster.life} / {monster_max_life} de Vida.")
-                print("| -------------------------")
-                pause = input("| > Enter ")
-                # Caso a vida do monstro seja igual a menor que zero ele é derrotado
-                if monster.life <= 0:
-                    # Fim de combate :)
+                        f"| ! Herói: " + Fore.GREEN + f"{heroi.atual_life}" + Fore.CYAN + " / " + Fore.GREEN +  f"{heroi.life}" 
+                        + Fore.CYAN + fight_menu, 0, 3
+                    )
+            
+            # Caso Queira Sair da Masmorra
+            if option == 0:
+                clear_terminal()
+                input("| =============================\n" 
+                      + f"| !! Sua jornada parou no andar {heroi.level}\n"
+                      + "| ! Saindo da Masmorra... \n" + "| =============================\n" 
+                      + "| > Enter "
+                )
+                return 2
+            
+            elif option == 1:
 
-                    clear_terminal() # Limpeza do Terminal
-                    print("| -------------------------")
-                    print(f"| > O/A {monster.name} {monster.title} foi derrotado(a)")
-                    print("| -------------------------")
-                    pause = input("| > Enter ")
+                attack = heroi.attack(monster.dex)
+                dodge = heroi.dodge(monster.accuracy)
+                if heroi.dex >= monster.dex:
 
-                    # Aprimorando o herói após vitória
-                    while True:
+                    # Heroi Ataca
+                    result_attack = attack_time(monster, attack, heroi.damage + heroi.arsenal[0].damage) # Heroi Ataca
+                    result_print(result_attack, monster, heroi) # Print do Resultado
+                    
+                    # Caso Monstro seja Derrotado
+                    if monster.atual_life <= 0:
+                        # Fim de Combate :)
+                        death(1, monster, heroi)
+                        return True
+                    
+                    # Monstro Ataca
+                    result_dodge = dodge_time(heroi, dodge, monster.damage) # Heroi Esquiva
+                    result_print2(result_dodge, monster, heroi)
 
-                        if heroi.level % 5 != 0:
-                            clear_terminal() # Limpeza do Terminal
-                            print("| -------------------------")
-                            print("| !!! Você conseguiu um Aprioramento!")
-                            print("| -------------------------")
-                            print("| -> Opções de Upgrade:")
-                            print("|   [1]. Dano # Ataques causam mais dano")
-                            print("|   [2]. Dex # Aumenta suas chances de esquivar de ataques")
-                            print("|   [3]. Precisão # Aumenta sua chance de acertar ataques")
-                            print("|   [4]. Vida # Aumenta sua vida máxima e recupera sua vida")
-                            try:
-                                opcao = int(input("| > Escolha: ")) - 1 # Reduz a escolha em um levando em consideração a lista
-                            except ValueError:
-                                print("| > Opção inválida, tente novamente")
+                    if heroi.atual_life <= 0:
+                        # Fim de Combate :(
+                        death(0, monster, heroi)
+                        return False
+                else:
+                    # Monstro Ataca
+                    result_dodge = dodge_time(heroi, dodge, monster.damage) # Heroi Esquiva
+                    result_print2(result_dodge, monster, heroi)
+                    
+                    # Caso Heroi seja Derrotado
+                    if heroi.atual_life <= 0:
+                        # Fim de Combate :(
+                        death(0, monster, heroi)
+                        return False
+                    
+                    # Heroi Ataca
+                    result_attack = attack_time(monster, attack, heroi.damage + heroi.arsenal[0].damage) # Heroi Ataca
+                    result_print(result_attack, monster, heroi)
 
-                            if opcao < 0 or opcao >= 4:
-                                print("| > Opção inválida, tente novamente")
-                            else:
-                                # Up o heroi de Level
-                                heroi.up_level(heroi.level, opcao)
-
-                                status = heroi.status
-                                arsenal = heroi.arsenal
-                                clear_terminal() # Limpeza do Terminal
-                                print("| -------------------------")
-                                print("| !! Status Atualizados:")
-                                print("| -------------------------")
-                                print(f"|   Vida: { heroi.life}")
-                                print(f"|   Dex: {status['dex']} | Precisão: {status['accuracy']}")
-                                print(f"|   Dano: {status['damage']} + {arsenal[0].damage} ({arsenal[0].name})")
-                                print("| -------------------------")
-                                pause = input("| > Enter ")
-                                break
-                        else:
-
-                            arma_nova = Weapon(level=heroi.level + 1)
-                            clear_terminal() # Limpeza do Terminal
-                            print("| -------------------------")
-                            print("| !!! O monstro deixou uma Arma!")
-                            print("| -------------------------")
-                            print(f"| ! {arma_nova.name} {arma_nova.adj} Dano: {arma_nova.damage}")
-                            print("| -------------------------")
-                            print("| -> Opções:")
-                            print("|   [1]. Pegar")
-                            print("|   [2]. Deixar")
-                            print("| -------------------------")
-                            opcao = int(input("| > Escolha: "))  # Reduz a escolha em um levando em consideração a lista
-
-                            if opcao < 1 or opcao > 2:
-                                print("| > Opção inválida, tente novamente")
-                            else:
-                                # Adiciona a arma ao inventário
-                                if opcao == 1:
-                                    heroi.add_weapon(arma_nova)
-                                    clear_terminal() # Limpeza do Terminal
-                                    print("| -------------------------") 
-                                    print(f"| !!!{arma_nova.name} {arma_nova.adj} adicionado(a) ao inventário!")
-                                    print("| -------------------------")
-                                    pause = input("| > Enter ") 
-                                break
-
-                    break # Fim do combate
+                    # Caso Monstro seja Derrotado
+                    if monster.atual_life <= 0:
+                        # Fim de Combate :)
+                        death(1, monster, heroi)
+                        return True
+            
+            # Print dos status do monstro
+            elif option == 2:
+                print_monster(monster)
+            
+            # Inventário
             else:
-                # Se falsou o monstro esquivou!
-                clear_terminal() # Limpeza do Terminal
-                print("| -------------------------")
-                print(f"| ! O/A {monster.name} {monster.title} esquivou!!")
-                print("| -------------------------")
-                pause = input("| > Enter ") 
-
-            # Vez do Monstro Atacar:
-            if heroi.dodge(monster.status['accuracy']):    
-                # Se retornar True o heroi foi acertado!!
-                
-                # Reduz a vida do Heroi
-                heroi.atual_life -= monster.status['damage']
-                clear_terminal() # Limpeza do Terminal
-                print("| -------------------------")
-                print(f"| ! O/A {monster.name} {monster.title} te acertou!!")
-                print(f"| ! Causou {monster.status['damage']} de dano!!")
-                print(f"| ! Você está com {heroi.atual_life} / {heroi.life}  de vida restante.")
-                print("| -------------------------")
-                pause = input("| > Enter ") 
-                # Caso a vida chegue a zero:
-                if heroi.atual_life <= 0: 
-
-                    # Fim de Run:
-                    clear_terminal() # Limpeza do Terminal
-                    print("| -------------------------")
-                    print(f"| ! O/A {monster.name} {monster.title} te derrotou...")
-                    print("| ! Você Perdeu, saindo da masmorra...")
-                    print("| -------------------------")
-                    pause = input("| > Enter ")
-                    return 0 # Retorna para o game que o jogador perdeu
-            else:
-                # Se falsou o heroi esquivou!
-                clear_terminal() # Limpeza do Terminal
-                print("| -------------------------")
-                print(f"| ! O/A {monster.name} {monster.title} errou!!")
-                print("| -------------------------")
-                pause = input("| > Enter ")
-
-        elif option == 2:
-            # Verifica as informações do monstro:
-            clear_terminal() # Limpeza do Terminal
-            print("| -------------------------")
-            print(f"| !! {monster.name} {monster.title}:")
-            print(f"|   Dano: {monster.status['damage']} | Life: {monster.life}")
-            print(f"|   Dex: {monster.status['dex']} | Precisão: {monster.status['accuracy']}")
-            print("| -------------------------""")
-            pause = input("| > Enter ")
-            # ! Não é atacado caso queira analisar o monstro, o turno é pulado
-        
-        elif option == 3:
-            # Abre sua Mochila
-            heroi.inventory(arsenal = inventory(heroi.arsenal))
-
-            # Vez do Monstro Atacar:
-            if heroi.dodge(monster.status['accuracy']):    
-                # Se retornar True o heroi foi acertado!!
-                # Reduz a vida do Heroi
-                heroi.life -= monster.status['damage']
-                clear_terminal() # Limpeza do Terminal
-                print("| -------------------------")
-                print(f"| ! O/A {monster.name} {monster.title} te acertou!!")
-                print(f"| ! Causou {monster.status['damage']} de dano!!")
-                print(f"| ! Você está com {heroi.life} de vida restante.")
-                print("| -------------------------")
-                pause = input("| > Enter ")
-                # Caso a vida chegue a zero:
-                if heroi.life <= 0: 
-
-                    # Fim de Run:
-                    clear_terminal() # Limpeza do Terminal
-                    print("| -------------------------")
-                    print(f"| ! O/A {monster.name} {monster.title} te derrotou...")
-                    print("| ! Você Perdeu, saindo da masmorra...")
-                    print("| -------------------------")
-                    pause = input("| > Enter ")
-                    return 0 # Retorna para o game que o jogador perdeu
-            else:
-                # Se falsou o heroi esquivou!
-                clear_terminal() # Limpeza do Terminal
-                print("| -------------------------")
-                print(f"| ! O/A {monster.name} {monster.title} errou!!")
-                print("| -------------------------")
-                pause = input("| > Enter ")
-            # ! Caso queira trocar de Arma o monstro pode atacar
-
-    return 1 # Retorna para o jogo que o jogador avançou o andar
-
+                heroi.arsenal = inventory(heroi)
 
 # Função de Ver o inventário do Heroi:
-def inventory(arsenal):
-
+def inventory(heroi):
     while True:
         clear_terminal() # Limpeza do Terminal
-        print("| -------------------------")
-        print(f"| !!! Inventário:")
-        print("| -------------------------")
-        print(f"| ! Arma Equipada: {arsenal[0].name} {arsenal[0].adj} Dano: {arsenal[0].damage}")
-        print("| -------------------------")
+        print(Fore.CYAN + msg_inventory
+               + f"| ! Arma Equipada: {heroi.arsenal[0].name} {heroi.arsenal[0].adj} Dano: {heroi.arsenal[0].damage}\n"
+               + "| =========================="
+        )
 
         # Lista demais armas do personagem
-        if len(arsenal) > 1:
-            for count, arma in enumerate(arsenal[1:]): # Le a lista de armas a partir da segunda arma
+        if len(heroi.arsenal) > 1:
+            for count, arma in enumerate(heroi.arsenal[1:]): # Le a lista de armas a partir da segunda arma
                 print(f"|   [{count + 1}]. {arma.name} {arma.adj} Dano: {arma.damage}")
         else:
             print("| ! Mochila Vazia")
-        
-        # Pergunta o que o usuário deseja fazer:
-        print("| -------------------------")
-        print("| -> Opções:")
-        print("|   [1]. Equipar Nova Arma")
-        print("|   [2]. Jogar Arma Fora")
-        print("|   [0]. Voltar")
-        opcao = int(input("| > Escolha: "))
-        
-        if opcao > 2 or opcao < 0:
-            print("| ! Opção inválida, tente novamente")
+
+        opcao = menu(Fore.CYAN + menu_inventory, 0, 2, 1)
+            
+        # Caso queira equipar:
+        if opcao == 1:
+            if len(heroi.arsenal) > 0:
+
+                arma_nova = menu(menu_arma, 0, len(heroi.arsenal), 1)
+                if arma_nova != 0:
+                    # ! Arma 0 sempre será a arma equipada
+                    heroi.arsenal[0], heroi.arsenal[arma_nova] = heroi.arsenal[arma_nova], heroi.arsenal[0] # Troca as armas de posição
+                    print("| ==========================\n"
+                          + f"| ! {arma.name} {arma.adj} equipado(a)!"
+                          + "| =========================="
+                    )
+            else: 
+                print("| ! Não há outra arma para equipar")
+            
+        # Caso queira deletar uma arma:
+        elif opcao == 2:
+            if len(heroi.arsenal) > 0:
+
+                arma_del = menu(menu_arma_del, 0, len(heroi.arsenal), 1)
+                if arma_del != 0:
+                    del heroi.arsenal[opcao]
+                    print("| ==========================\n"
+                          + f"| ! Arma Removida!"
+                          + "| =========================="
+                    )
+            else: 
+                print("| ! Sua mochila já está vazia")
         else:
-            
-            # Caso queira equipar:
-            if opcao == 1:
-                if len(arsenal) > 0:
-                    while True:
-                        print("| -------------------------")
-                        print("| -> Qual Arma Equipar?")
-                        opcao = int(input("| > Escolha: "))
-                        if opcao > len(arsenal) or opcao < 0:
-                            print("| ! Opção inválida, tente novamente")
-                        else:
-                            if opcao == 0:
-                                print("| ! Arma Já esta equipada")
-                            else:
-                                arsenal[0], arsenal[opcao] = arsenal[opcao], arsenal[0] # Troca as armas de posição
-                                print("| -------------------------")
-                                print(f"| ! {arma.name} {arma.adj} equipado(a)")
-                            break
-                            # ! Arma 0 sempre será a arma equipada
-                else: 
-                    print("| ! Não há outra arma para equipar")
-            
-            # Caso queira deletar uma arma:
-            elif opcao == 2:
-                if len(arsenal) > 0:
-                    while True:
-                        print("| -------------------------")
-                        print("| -> Qual Arma Deixar?")
-                        opcao = int(input("| > Escolha: ")) 
-                        if opcao > len(arsenal) or opcao < 0:
-                            print("| ! Opção inválida, tente novamente")
-                        else:
-                            if opcao == 0:
-                                print("| ! Não pode remover a arma equipada")
-                            else:
-                                del arsenal[opcao]
-                                print(f"| ! Arma removida")
-                            break
-                            # ! Arma 0 sempre será a arma equipada
-                else: 
-                    print("| ! Sua mochila já está vazia")
-            else:
-                break
+            break
+        
+    return 3
+
+# Função de Comparar Ataque
+def attack_time( persona, attack, dano):
+    # Persona é Atacado:
+    if attack:
+        persona.atual_life = persona.atual_life - dano
+        # Personagem foi acertado
+        return 1
     
-    return arsenal
+    # Persona Desvia:
+    else:
+        return 0
+        
+# Função de Comparar Desvio
+def dodge_time(persona, dodge, dano):
+    # Persona É Atacado
+    if dodge:
+        # Personagem Desvia
+        return 0
+    else:
+        # Personagem foi acertado 
+        persona.atual_life = persona.atual_life - dano
+        return 1
+        
